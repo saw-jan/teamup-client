@@ -2,10 +2,18 @@
   "name": "teamup-client",
   "description": "Simple client for Teamup calendar API",
   "version": "0.0.1",
+  "main": "./lib/index.js",
+  "type": "module",
   "author": "Sawjan G.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saw-jan/teamup-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/saw-jan/teamup-client/issues"
+  },
   "dependencies": {
-    "axios": "^0.27.2",
-    "dotenv": "^16.0.1"
+    "axios": "^0.27.2"
   }
 }
