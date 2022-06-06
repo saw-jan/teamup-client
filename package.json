@@ -1,4 +1,9 @@
 {
+  "name": "teamup-client",
+  "description": "Simple client for Teamup calendar API",
+  "version": "0.0.1",
+  "author": "Sawjan G.",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.27.2",
     "dotenv": "^16.0.1"
