@@ -1,7 +1,7 @@
 {
   "name": "@sawjan/teamup-client",
   "description": "Simple client for Teamup calendar API",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./lib/index.js",
   "type": "module",
   "author": "Sawjan G. <saw.jan.grg3e@gmail.com> (https://sajang.com.np)",
