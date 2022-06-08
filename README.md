@@ -8,17 +8,19 @@
 npm i @sawjan/teamup-client
 ```
 
-### Usage
+### Example
 
 ```js
 const Client = require('@sawjan/teamup-client')
 
+// create a client instance
 const { SubCalendar } = new Client({
   url: 'https://api.teamup.com',
   calToken: '<calendar_token>',
   apiKey: '<api_key>',
 })
 
+// list all the sub-calendars
 SubCalendar.listSubCalendars().then(({ data }) => {
   console.log(data)
 })
@@ -28,34 +30,36 @@ SubCalendar.listSubCalendars().then(({ data }) => {
 
 #### **Events**
 
-1.  **listEvents**
+1.  **listEvents**([options])
 
-    _Args_:
+    - `options?` \<Object\>
 
-    startDate: _string_ [YYYY-MM-DD] _(optional)_
+      - `startDate?`: \<string\>
 
-    endDate: _string_ [YYYY-MM-DD] _(optional)_
+      - `endDate?`: \<string\>
 
-    subcalendarId: _array_ _(optional)_
+      - `subcalendarId?`: \<array\>
 
-    query: _string_ _(optional)_
+      - `query?`: \<string\>
 
-1.  **listEvent**
+    - Returns: \<Promise\<Response\>\>
 
-    _Args_:
+1.  **listEvent**(eventId)
 
-    \*eventId: number
+    - `eventId` \<number\>
+    - Returns: \<Promise\<Response\>\>
 
 #### **SubCalendar**
 
-1.  **listSubCalendars**
+1.  **listSubCalendars**([options])
 
-    _Args_:
+    - `options?` \<Object\>
 
-    includeInactive: _boolean_ _(optional)_
+      - `includeInactive?`: \<boolean\>
 
-1.  **listSubCalendar**
+    - Returns: \<Promise\<Response\>\>
 
-    _Args_:
+1.  **listSubCalendar**(subCalendarId)
 
-    \*subCalendarId: _number_
+    - `subCalendarId` \<number\>
+    - Returns: \<Promise\<Response\>\>
