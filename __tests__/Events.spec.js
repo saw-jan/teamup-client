@@ -64,17 +64,12 @@ describe('Events class', function () {
       expect(() => API.listEvents({ someKey: true })).toThrow()
     })
 
-    // TODO:
-    // remove this loop and use test.each when the tests pass
-    ;[[], true, false, 123].forEach((option) => {
-      test.failing('invalid options', function () {
+    test.each([[], 'string', true, false, 123])(
+      'invalid options',
+      function (option) {
         expect(() => API.listEvents(option)).toThrow()
-      })
-    })
-    // remove this and added to above list
-    test('invalid options - odd', function () {
-      expect(() => API.listEvents('string')).toThrow()
-    })
+      }
+    )
   })
 
   describe('method: listEvent', function () {
@@ -92,16 +87,11 @@ describe('Events class', function () {
       expect(() => API.listEvent()).toThrow()
     })
 
-    // TODO:
-    // remove this loop and use test.each when the tests pass
-    ;[[], 'string', true, 123].forEach((id) => {
-      test.failing('invalid event id', function () {
+    test.each([[], 'string', true, false, {}])(
+      'invalid event id',
+      function (id) {
         expect(() => API.listEvent(id)).toThrow()
-      })
-    })
-    // remove this and added to above list
-    test('invalid event id - odd', function () {
-      expect(() => API.listEvent(false)).toThrow()
-    })
+      }
+    )
   })
 })

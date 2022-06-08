@@ -49,17 +49,12 @@ describe('SubCalendar class', function () {
       expect(() => API.listSubCalendars({ someKey: true })).toThrow()
     })
 
-    // TODO:
-    // remove this loop and use test.each when the tests pass
-    ;[[], true, false, 123].forEach((option) => {
-      test.failing('invalid options', function () {
+    test.each([([], 'string', true, false, 123)])(
+      'invalid options',
+      function (option) {
         expect(() => API.listSubCalendars(option)).toThrow()
-      })
-    })
-    // remove this and added to above list
-    test('invalid options - odd', function () {
-      expect(() => API.listSubCalendars('string')).toThrow()
-    })
+      }
+    )
   })
 
   describe('method: listSubCalendar', function () {
@@ -79,16 +74,8 @@ describe('SubCalendar class', function () {
       expect(() => API.listSubCalendar()).toThrow()
     })
 
-    // TODO:
-    // remove this loop and use test.each when the tests pass
-    ;[[], {}, true, 'text'].forEach((id) => {
-      test.failing('invalid id', function () {
-        expect(() => API.listSubCalendar(id)).toThrow()
-      })
-    })
-    // remove this and added to above list
-    test('invalid id - odd', function () {
-      expect(() => API.listSubCalendar(false)).toThrow()
+    test.each([[], {}, true, false, 'text'])('invalid id', function (id) {
+      expect(() => API.listSubCalendar(id)).toThrow()
     })
   })
 })
