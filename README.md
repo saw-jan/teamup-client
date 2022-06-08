@@ -8,6 +8,12 @@
 npm i @sawjan/teamup-client
 ```
 
+OR
+
+```bash
+yarn add @sawjan/teamup-client
+```
+
 ### Example
 
 ```js
