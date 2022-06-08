@@ -63,6 +63,10 @@ describe('Events class', function () {
       expect(Request.get).toHaveBeenCalledTimes(1)
     })
 
+    test('invalid option parameter', function () {
+      expect(() => API.listEvents({ someKey: true })).toThrow()
+    })
+
     test.each([[[]], ['string'], [true], [false], [123]])(
       'invalid options',
       function (options) {
