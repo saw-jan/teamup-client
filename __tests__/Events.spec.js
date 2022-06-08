@@ -62,4 +62,22 @@ describe('Events class', function () {
       expect(Request.get).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('method: listEvent', function () {
+    test('with event id (number)', function () {
+      API.listEvent(1234)
+
+      expect(Request.get).toHaveBeenCalledTimes(1)
+    })
+
+    test('with event id (string)', function () {
+      API.listEvent('1234')
+
+      expect(Request.get).toHaveBeenCalledTimes(1)
+    })
+
+    test('without event id', function () {
+      expect(() => API.listEvent()).toThrow()
+    })
+  })
 })
