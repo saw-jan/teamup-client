@@ -91,5 +91,12 @@ describe('Events class', function () {
     test('without event id', function () {
       expect(() => API.listEvent()).toThrow()
     })
+
+    test.each([[[]], [{}], [true], [false], ['text']])(
+      'invalid event id',
+      function (id) {
+        expect(() => API.listEvent(id)).toThrow()
+      }
+    )
   })
 })

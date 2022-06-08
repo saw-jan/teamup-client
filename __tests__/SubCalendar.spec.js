@@ -73,5 +73,12 @@ describe('SubCalendar class', function () {
     test('without event id', function () {
       expect(() => API.listSubCalendar()).toThrow()
     })
+
+    test.each([[[]], [{}], [true], [false], ['text']])(
+      'invalid event id',
+      function (id) {
+        expect(() => API.listSubCalendar(id)).toThrow()
+      }
+    )
   })
 })
