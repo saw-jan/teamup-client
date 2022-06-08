@@ -48,9 +48,7 @@ describe('SubCalendar class', function () {
     test.each([[[]], ['string'], [true], [false], [123]])(
       'invalid options',
       function (options) {
-        API.listSubCalendars(options)
-
-        expect(Request.get).toHaveBeenCalledTimes(1)
+        expect(() => API.listSubCalendars(options)).toThrow()
       }
     )
   })

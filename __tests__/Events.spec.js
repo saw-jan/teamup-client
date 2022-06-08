@@ -34,7 +34,7 @@ describe('Events class', function () {
           format: 'html',
         },
       ],
-    ])('valid options', function (options) {
+    ])('valid options value', function (options) {
       API.listEvents(options)
 
       expect(Request.get).toHaveBeenCalledTimes(1)
@@ -46,21 +46,29 @@ describe('Events class', function () {
       [{ query: {} }],
       [{ subcalendarId: 'id' }],
       [{ format: 'text' }],
-    ])('invalid options', function (options) {
+    ])('invalid options value', function (options) {
       expect(() => API.listEvents(options)).toThrow()
     })
 
     test.each([
+      [{}],
       [{ startDate: '' }],
       [{ endDate: undefined }],
       [{ query: false }],
       [{ subcalendarId: null }],
       [{ format: 0 }],
-    ])('ignored options', function (options) {
+    ])('ignored options value', function (options) {
       API.listEvents(options)
 
       expect(Request.get).toHaveBeenCalledTimes(1)
     })
+
+    test.each([[[]], ['string'], [true], [false], [123]])(
+      'invalid options',
+      function (options) {
+        expect(() => API.listEvents(options)).toThrow()
+      }
+    )
   })
 
   describe('method: listEvent', function () {
