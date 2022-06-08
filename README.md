@@ -44,7 +44,7 @@ SubCalendar.listSubCalendars().then(({ data }) => {
 
       - `endDate?`: \<string\>
 
-      - `subcalendarId?`: \<array\>
+      - `subcalendarId?`: \<Array\<number\>\>
 
       - `query?`: \<string\>
 
