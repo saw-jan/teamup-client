@@ -3,9 +3,11 @@
   "description": "Simple client for Teamup calendar API",
   "version": "1.0.0",
   "main": "./lib/index.js",
-  "type": "module",
   "author": "Sawjan G. <saw.jan.grg3e@gmail.com> (https://sajang.com.np)",
   "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/saw-jan/teamup-client.git"
