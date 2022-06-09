@@ -1,3 +1,4 @@
+const { buildParams } = require('./helpers')
 const Events = require('../lib/Events')
 const Logger = require('../lib/Logger')
 
@@ -34,8 +35,12 @@ describe('Events class', function () {
         },
       ],
     ])('valid options value', function (options) {
+      const urlParams = buildParams(options)
+      console.log(urlParams)
       API.listEvents(options)
+
       expect(Request.get).toHaveBeenCalledTimes(1)
+      expect(Request.get).toHaveBeenCalledWith(`/events?${urlParams}`)
     })
 
     test.each([
@@ -58,6 +63,7 @@ describe('Events class', function () {
     ])('ignored options value', function (options) {
       API.listEvents(options)
       expect(Request.get).toHaveBeenCalledTimes(1)
+      expect(Request.get).toHaveBeenCalledWith(`/events`)
     })
 
     test('invalid option parameter', function () {
@@ -76,11 +82,13 @@ describe('Events class', function () {
     test('with event id (number)', function () {
       API.listEvent(1234)
       expect(Request.get).toHaveBeenCalledTimes(1)
+      expect(Request.get).toHaveBeenCalledWith(`/events/1234`)
     })
 
     test('with event id (string)', function () {
       API.listEvent('1234')
       expect(Request.get).toHaveBeenCalledTimes(1)
+      expect(Request.get).toHaveBeenCalledWith(`/events/1234`)
     })
 
     test('without event id', function () {
