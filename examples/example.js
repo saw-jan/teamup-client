@@ -9,26 +9,25 @@ const { Events, SubCalendar } = new Client({
 ;(async function getLeaves() {
   // fetch id for leave calendar
   let leaveCalId
-  await SubCalendar.listSubCalendars({ includeInactive: true }).then(
-    ({ data: { subcalendars } }) => {
+  await SubCalendar.listSubCalendars()
+    .then(({ data: { subcalendars } }) => {
       for (const subCal of subcalendars) {
         if (subCal.name === 'leave') {
           leaveCalId = subCal.id
           break
         }
       }
-    }
-  )
+    })
+    .catch((err) => console.log(err.response.data))
 
-  // get all events identified by leaveCalId
-  const {
-    data: { events },
-  } = await Events.listEvents({
-    startDate: '2022-06-06',
-    endDate: '2022-06-10',
-    subcalendarId: leaveCalId,
-  })
-
-  // leave events
-  console.log(events)
+  if (leaveCalId) {
+    // get all events identified by leaveCalId
+    await Events.listEvents({
+      startDate: '2022-06-06',
+      endDate: '2022-06-10',
+      subcalendarId: [leaveCalId],
+    })
+      .then(({ data: { events } }) => console.log(events))
+      .catch((err) => console.log(err.response.data))
+  }
 })()
