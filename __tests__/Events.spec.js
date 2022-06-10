@@ -1,3 +1,4 @@
+const { buildParams } = require('./helpers')
 const Events = require('../lib/Events')
 const Logger = require('../lib/Logger')
 
@@ -34,8 +35,11 @@ describe('Events class', function () {
         },
       ],
     ])('valid options value', function (options) {
+      const urlParams = buildParams(options)
       API.listEvents(options)
+
       expect(Request.get).toHaveBeenCalledTimes(1)
+      expect(Request.get).toHaveBeenCalledWith(`/events?${urlParams}`)
     })
 
     test.each([
@@ -44,50 +48,58 @@ describe('Events class', function () {
       [{ query: {} }],
       [{ subcalendarId: 'id' }],
       [{ format: 'text' }],
+      [{ startDate: '' }],
+      [{ endDate: undefined }],
+      [{ subcalendarId: undefined }],
     ])('invalid options value', function (options) {
       expect(() => API.listEvents(options)).toThrow()
     })
 
-    test.each([
-      [{}],
-      [{ startDate: '' }],
-      [{ endDate: undefined }],
-      [{ query: false }],
-      [{ subcalendarId: null }],
-      [{ format: 0 }],
-    ])('ignored options value', function (options) {
-      API.listEvents(options)
-      expect(Request.get).toHaveBeenCalledTimes(1)
-    })
+    test.each([[{}], [{ subcalendarId: null }]])(
+      'ignored options value',
+      function (options) {
+        API.listEvents(options)
+        expect(Request.get).toHaveBeenCalledTimes(1)
+        expect(Request.get).toHaveBeenCalledWith(`/events`)
+      }
+    )
 
     test('invalid option parameter', function () {
       expect(() => API.listEvents({ someKey: true })).toThrow()
     })
 
-    test.each([[], 'string', true, false, 123])(
+    test.each([[], 'string', true, false, 123, null])(
       'invalid options',
       function (option) {
         expect(() => API.listEvents(option)).toThrow()
       }
     )
+
+    test('ignored option: undefined', function () {
+      API.listEvents(undefined)
+      expect(Request.get).toHaveBeenCalledTimes(1)
+      expect(Request.get).toHaveBeenCalledWith(`/events`)
+    })
   })
 
   describe('method: listEvent', function () {
     test('with event id (number)', function () {
       API.listEvent(1234)
       expect(Request.get).toHaveBeenCalledTimes(1)
+      expect(Request.get).toHaveBeenCalledWith(`/events/1234`)
     })
 
     test('with event id (string)', function () {
       API.listEvent('1234')
       expect(Request.get).toHaveBeenCalledTimes(1)
+      expect(Request.get).toHaveBeenCalledWith(`/events/1234`)
     })
 
     test('without event id', function () {
       expect(() => API.listEvent()).toThrow()
     })
 
-    test.each([[], 'string', true, false, {}])(
+    test.each([[], 'string', true, false, {}, null, undefined])(
       'invalid event id',
       function (id) {
         expect(() => API.listEvent(id)).toThrow()
