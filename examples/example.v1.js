@@ -2,7 +2,7 @@
 // This example works with the version ^1
 //
 
-const Client = require('@sawjan/teamup-client')
+const Client = require('../lib')
 
 const { Events, SubCalendar } = new Client({
   url: 'https://api.teamup.com',
