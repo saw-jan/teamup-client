@@ -9,18 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **BREAKING:** Return custom data and error responses
+- **BREAKING:** APIs return custom data and error responses
 - Document latest changes in README docs
 - New TeamupClient config options: `bearerToken`
 
 ### Changed
 
-- **BREAKING:**: TeamupClient config options are renamed
+- **BREAKING:** TeamupClient config options are renamed
 
-  - `calToken` -> `teamupToken`
-  - `calPassword` -> `teamupPassword`
-
+  - `calToken` -> `calendarKey`
   - `apiKey` -> `teamupToken`
+  - `calPassword` -> `teamupPassword`
 
 - `Client` is merged to the `Request` class
 - Consistent variables naming
