@@ -8,29 +8,9 @@
 npm i @sawjan/teamup-client
 ```
 
-OR
+### Examples
 
-```bash
-yarn add @sawjan/teamup-client
-```
-
-### Example
-
-```js
-const Client = require('@sawjan/teamup-client')
-
-// create a client instance
-const { SubCalendar } = new Client({
-  url: 'https://api.teamup.com',
-  calToken: '<calendar_token>',
-  apiKey: '<api_key>',
-})
-
-// list all the sub-calendars
-SubCalendar.listSubCalendars().then(({ data }) => {
-  console.log(data)
-})
-```
+See example code: [examples](./examples/)
 
 ### APIs
 
@@ -44,16 +24,16 @@ SubCalendar.listSubCalendars().then(({ data }) => {
 
       - `endDate?`: \<string\>
 
-      - `subcalendarId?`: \<Array\<number\>\>
-
       - `query?`: \<string\>
 
-    - Returns: \<Promise\<Response\>\>
+      For more options see [Query Parameters](https://apidocs.teamup.com/docs/api/0f9f896800ffe-get-events-collection-get-events-changed-search-events#Query-Parameters)
+
+    - Returns: Promise\<[Response](#response)|[ErrorResponse](#errorresponse)\>
 
 1.  **listEvent**(eventId)
 
     - `eventId` \<number\>
-    - Returns: \<Promise\<Response\>\>
+    - Returns: Promise\<[Response](#response)|[ErrorResponse](#errorresponse)\>
 
 #### **SubCalendar**
 
@@ -63,9 +43,31 @@ SubCalendar.listSubCalendars().then(({ data }) => {
 
       - `includeInactive?`: \<boolean\>
 
-    - Returns: \<Promise\<Response\>\>
+    - Returns: Promise\<[Response](#response)|[ErrorResponse](#errorresponse)\>
 
 1.  **listSubCalendar**(subCalendarId)
 
     - `subCalendarId` \<number\>
-    - Returns: \<Promise\<Response\>\>
+    - Returns: Promise\<[Response](#response)|[ErrorResponse](#errorresponse)\>
+
+## Structs
+
+### Response
+
+```js
+{
+  status: <string>,
+  statusText: <string>,
+  data: <object>
+}
+```
+
+### ErrorResponse
+
+```js
+{
+  status: <string>,
+  statusText: <string>,
+  error: <object>
+}
+```
