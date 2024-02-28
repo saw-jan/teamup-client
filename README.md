@@ -29,19 +29,25 @@ See example code: [examples](./examples/)
 
 #### **Event**
 
-1.  **getEvents**([options]): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
+- .**getEvents**([options])
 
-    For available options see [Query Parameters](https://apidocs.teamup.com/docs/api/0f9f896800ffe-get-events-collection-get-events-changed-search-events#Query-Parameters)
+  For available options see [Query Parameters](https://apidocs.teamup.com/docs/api/0f9f896800ffe-get-events-collection-get-events-changed-search-events#Query-Parameters)
 
-2.  **getEvent**(eventId): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
+- .**getAllDayEvents**([options])
+- .**getRecurringEvents**([options])
+- .**getEvent**(eventId)
 
 #### **SubCalendar**
 
-1.  **getSubCalendars**([options]): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
+- .**getSubCalendars**([options])
 
-    For available options see [Query Parameters](https://apidocs.teamup.com/docs/api/046361930f27a-get-a-collection-of-sub-calendars#Query-Parameters)
+  For available options see [Query Parameters](https://apidocs.teamup.com/docs/api/046361930f27a-get-a-collection-of-sub-calendars#Query-Parameters)
 
-2.  **getSubCalendar**(subCalendarId): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
+- .**getInactiveSubCalendars**([options])
+- .**getSubCalendar**(subCalendarId):
+- .**getSubCalendarByName**(subCalendarName)
+
+All APIs will either return Promise\<[SuccessResponse](#successresponse)\> or throw Promise\<[ErrorResponse](#errorresponse)\>
 
 ## Structs
 
@@ -49,7 +55,7 @@ See example code: [examples](./examples/)
 
 ```js
 {
-  status: <string>,
+  status: <number>,
   statusText: <string>,
   data: <array>|<object>
 }
@@ -59,7 +65,7 @@ See example code: [examples](./examples/)
 
 ```js
 {
-  status: <string>,
+  status: <number>,
   statusText: <string>,
   error: <object>
 }
