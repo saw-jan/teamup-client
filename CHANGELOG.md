@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New TeamupClient config options: `bearerToken`
 - New APIs:
   - Event.`listAllDayEvents()` Gets events occurring for the whole day
+  - Event.`listRecurringEvents()` Gets recurring events
 
 ### Changed
 
