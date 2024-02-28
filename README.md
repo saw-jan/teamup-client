@@ -27,7 +27,7 @@ See example code: [examples](./examples/)
 
 ### APIs
 
-#### **Events**
+#### **Event**
 
 1.  **listEvents**([options]): Promise\<[Response](#response)|[ErrorResponse](#errorresponse)\>
 

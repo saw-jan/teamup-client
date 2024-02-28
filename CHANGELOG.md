@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `apiKey` -> `teamupToken`
   - `calPassword` -> `teamupPassword`
 
+- **BREAKING:** `Events` class is renamed to `Event`
 - `Client` is merged to the `Request` class
 - Consistent variables naming
 - Solidify url joining
@@ -45,5 +46,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- APIs for listing Events: listEvents and listEvent
-- APIs for listing Sub-Calendars: listSubCalendars and listSubCalendar
+- `Events`, `Client`, `SubCalendar`, `API` and `Request` classes
+- APIs for listing events: listEvents and listEvent
+- APIs for listing sub-calendars: listSubCalendars and listSubCalendar

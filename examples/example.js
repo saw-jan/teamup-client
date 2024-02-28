@@ -26,7 +26,7 @@ const client = new Teamup({
 
   if (leaveCalId) {
     // get all events identified by leaveCalId
-    await client.Events.listEvents({
+    await client.Event.listEvents({
       startDate: '2022-06-06',
       endDate: '2022-06-10',
       subcalendarId: [leaveCalId],
