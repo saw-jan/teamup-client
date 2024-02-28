@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Removed
+
+## [2.0.0] - 2024-02-28
+
+### Added
+
 - **BREAKING:** APIs return custom data and error responses
 - Document latest changes in README docs
 - New TeamupClient config options: `bearerToken`
