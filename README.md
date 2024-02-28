@@ -51,7 +51,7 @@ See example code: [examples](./examples/)
 {
   status: <string>,
   statusText: <string>,
-  data: <object>
+  data: <array>|<object>
 }
 ```
 

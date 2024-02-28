@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING:** APIs return custom data and error responses
 - Document latest changes in README docs
 - New TeamupClient config options: `bearerToken`
+- New APIs:
+  - Event.`listAllDayEvents()` Gets events occurring for the whole day
 
 ### Changed
 
