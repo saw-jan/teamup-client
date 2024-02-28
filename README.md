@@ -29,19 +29,19 @@ See example code: [examples](./examples/)
 
 #### **Event**
 
-1.  **listEvents**([options]): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
+1.  **getEvents**([options]): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
 
     For available options see [Query Parameters](https://apidocs.teamup.com/docs/api/0f9f896800ffe-get-events-collection-get-events-changed-search-events#Query-Parameters)
 
-1.  **listEvent**(eventId): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
+2.  **getEvent**(eventId): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
 
 #### **SubCalendar**
 
-1.  **listSubCalendars**([options]): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
+1.  **getSubCalendars**([options]): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
 
     For available options see [Query Parameters](https://apidocs.teamup.com/docs/api/046361930f27a-get-a-collection-of-sub-calendars#Query-Parameters)
 
-1.  **listSubCalendar**(subCalendarId): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
+2.  **getSubCalendar**(subCalendarId): Promise\<[SuccessResponse](#response)|[ErrorResponse](#errorresponse)\>
 
 ## Structs
 

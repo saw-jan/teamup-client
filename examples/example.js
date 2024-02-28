@@ -13,7 +13,7 @@ const client = new Teamup({
 ;(async function getLeaves() {
   // fetch id for leave calendar
   let leaveCalId
-  await client.SubCalendar.listSubCalendars()
+  await client.SubCalendar.getSubCalendars()
     .then(({ data: { subcalendars } }) => {
       for (const subCal of subcalendars) {
         if (subCal.name === 'leave') {
@@ -26,7 +26,7 @@ const client = new Teamup({
 
   if (leaveCalId) {
     // get all events identified by leaveCalId
-    await client.Event.listEvents({
+    await client.Event.getEvents({
       startDate: '2022-06-06',
       endDate: '2022-06-10',
       subcalendarId: [leaveCalId],

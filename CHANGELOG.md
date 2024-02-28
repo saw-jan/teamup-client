@@ -13,9 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Document latest changes in README docs
 - New TeamupClient config options: `bearerToken`
 - New APIs:
-  - Event.`listAllDayEvents()` Gets events occurring for the whole day
-  - Event.`listRecurringEvents()` Gets recurring events
-  - SubCalendar.`listInactiveSubCalendars()` Gets inactive sub-calendars
+  - Event.`getAllDayEvents()` Gets events occurring for the whole day
+  - Event.`getRecurringEvents()` Gets recurring events
+  - SubCalendar.`getInactiveSubCalendars()` Gets inactive sub-calendars
   - SubCalendar.`getSubCalendarByName()` Gets a sub-calendar by name
 
 ### Changed
@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `calPassword` -> `teamupPassword`
 
 - **BREAKING:** `Events` class is renamed to `Event`
+- **BREAKING:** exposed methods are renamed:
+  - `listEvents` -> `getEvents`
+  - `listEvent` -> `getEvent`
+  - `listSubCalendars` -> `getSubCalendars`
+  - `listSubCalendar` -> `getSubCalendar`
 - `Client` is merged to the `Request` class
 - Consistent variables naming
 - Solidify url joining
