@@ -1,5 +1,5 @@
 //
-// This example works with the latest released version
+// This example works with the current codebase
 //
 
 const Teamup = require('../lib')
