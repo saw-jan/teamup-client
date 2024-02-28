@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New APIs:
   - Event.`listAllDayEvents()` Gets events occurring for the whole day
   - Event.`listRecurringEvents()` Gets recurring events
+  - SubCalendar.`listInactiveSubCalendars()` Gets inactive sub-calendars
 
 ### Changed
 
