@@ -1,19 +1,39 @@
 const { buildParams } = require('./helpers')
-const Events = require('../lib/Events')
-const Logger = require('../lib/Logger')
+const Event = require('../lib/Event')
 
-describe('Events class', function () {
-  let API
-  const Request = { get: jest.fn() }
+// mocks
+jest.mock('../lib/Request', () => {
+  return function () {
+    return {
+      get: () => ({ status: 200, statusText: 'Ok', data: {} }),
+    }
+  }
+})
+const Request = require('../lib/Request')
 
-  beforeAll(function () {
-    API = new Events(Request, new Logger())
-  })
+const route = '/events'
+const params = {
+  startDate: null,
+  endDate: null,
+  query: null,
+  subcalendarId: null,
+  format: null,
+  modifiedSince: null,
+  mode: null,
+}
 
-  describe('method: listEvents', function () {
-    test('no options', function () {
-      API.listEvents()
-      expect(Request.get).toHaveBeenCalledTimes(1)
+describe('Event class', function () {
+  const event = new Event(new Request())
+
+  describe('method: getEvents', function () {
+    const spyGet = jest.spyOn(event._request, 'get')
+    const spyRenderSuccessResponse = jest.spyOn(event, '_renderSuccessResponse')
+
+    test.only('no options', function () {
+      event.getEvents()
+      expect(spyGet).toHaveBeenCalledTimes(1)
+      expect(spyGet).toHaveBeenCalledWith(route, {})
+      expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
     })
 
     test.each([
@@ -36,7 +56,7 @@ describe('Events class', function () {
       ],
     ])('valid options value', function (options) {
       const urlParams = buildParams(options)
-      API.listEvents(options)
+      event.getEvents(options)
 
       expect(Request.get).toHaveBeenCalledTimes(1)
       expect(Request.get).toHaveBeenCalledWith(`/events?${urlParams}`)
@@ -52,31 +72,31 @@ describe('Events class', function () {
       [{ endDate: undefined }],
       [{ subcalendarId: undefined }],
     ])('invalid options value', function (options) {
-      expect(() => API.listEvents(options)).toThrow()
+      expect(() => event.getEvents(options)).toThrow()
     })
 
     test.each([[{}], [{ subcalendarId: null }]])(
       'ignored options value',
       function (options) {
-        API.listEvents(options)
+        event.getEvents(options)
         expect(Request.get).toHaveBeenCalledTimes(1)
         expect(Request.get).toHaveBeenCalledWith(`/events`)
       }
     )
 
     test('invalid option parameter', function () {
-      expect(() => API.listEvents({ someKey: true })).toThrow()
+      expect(() => event.getEvents({ someKey: true })).toThrow()
     })
 
     test.each([[], 'string', true, false, 123, null])(
       'invalid options',
       function (option) {
-        expect(() => API.listEvents(option)).toThrow()
+        expect(() => event.getEvents(option)).toThrow()
       }
     )
 
     test('ignored option: undefined', function () {
-      API.listEvents(undefined)
+      event.getEvents(undefined)
       expect(Request.get).toHaveBeenCalledTimes(1)
       expect(Request.get).toHaveBeenCalledWith(`/events`)
     })
@@ -84,25 +104,25 @@ describe('Events class', function () {
 
   describe('method: listEvent', function () {
     test('with event id (number)', function () {
-      API.listEvent(1234)
+      event.listEvent(1234)
       expect(Request.get).toHaveBeenCalledTimes(1)
       expect(Request.get).toHaveBeenCalledWith(`/events/1234`)
     })
 
     test('with event id (string)', function () {
-      API.listEvent('1234')
+      event.listEvent('1234')
       expect(Request.get).toHaveBeenCalledTimes(1)
       expect(Request.get).toHaveBeenCalledWith(`/events/1234`)
     })
 
     test('without event id', function () {
-      expect(() => API.listEvent()).toThrow()
+      expect(() => event.listEvent()).toThrow()
     })
 
     test.each([[], 'string', true, false, {}, null, undefined])(
       'invalid event id',
       function (id) {
-        expect(() => API.listEvent(id)).toThrow()
+        expect(() => event.listEvent(id)).toThrow()
       }
     )
   })
