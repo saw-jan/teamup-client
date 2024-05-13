@@ -1,15 +1,17 @@
-const { buildParams } = require('./helpers')
+const { AxiosError } = require('axios')
 const Event = require('../lib/Event')
 
 // mocks
 jest.mock('../lib/Request', () => {
   return function () {
     return {
-      get: () => ({ status: 200, statusText: 'Ok', data: {} }),
+      ...jest.requireActual('../lib/Request'),
+      get: jest.fn(),
     }
   }
 })
 const Request = require('../lib/Request')
+const API = require('../lib/API')
 
 const route = '/events'
 const params = {
@@ -23,19 +25,41 @@ const params = {
 }
 
 describe('Event class', function () {
+  const spyValidateOptionType = jest.spyOn(API.prototype, '_validateOptionType')
+  const spyValidateId = jest.spyOn(API.prototype, '_validateId')
+  const spyRenderSuccessResponse = jest
+    .spyOn(API.prototype, '_renderSuccessResponse')
+    .mockImplementation(jest.fn())
+  const spyRenderErrorResponse = jest
+    .spyOn(API.prototype, '_renderErrorResponse')
+    .mockImplementation(jest.fn())
   const event = new Event(new Request())
 
-  describe('method: getEvents', function () {
-    const spyGet = jest.spyOn(event._request, 'get')
-    const spyRenderSuccessResponse = jest.spyOn(event, '_renderSuccessResponse')
+  afterEach(function () {
+    jest.clearAllMocks()
+  })
 
-    test.only('no options', function () {
-      event.getEvents()
-      expect(spyGet).toHaveBeenCalledTimes(1)
-      expect(spyGet).toHaveBeenCalledWith(route, {})
-      expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
+  describe('method: getEvents', function () {
+    const successResponse = getSuccesResponse('events')
+    let spyGet
+    beforeEach(function () {
+      spyGet = jest
+        .spyOn(event._request, 'get')
+        .mockImplementation(() => successResponse)
     })
 
+    test('no options', async function () {
+      await event.getEvents()
+      expect(spyGet).toHaveBeenCalledTimes(1)
+      expect(spyGet).toHaveBeenCalledWith(route, {})
+      expect(spyValidateOptionType).toHaveBeenCalledTimes(1)
+      expect(spyValidateOptionType).toHaveBeenCalledWith(params)
+      expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
+      expect(spyRenderSuccessResponse).toHaveBeenCalledWith(
+        successResponse,
+        'events'
+      )
+    })
     test.each([
       [{ startDate: '2022-01-01' }],
       [{ endDate: '2022-01-01' }],
@@ -54,76 +78,76 @@ describe('Event class', function () {
           format: 'html',
         },
       ],
-    ])('valid options value', function (options) {
-      const urlParams = buildParams(options)
-      event.getEvents(options)
+    ])('valid options value', async function (options) {
+      await event.getEvents(options)
 
-      expect(Request.get).toHaveBeenCalledTimes(1)
-      expect(Request.get).toHaveBeenCalledWith(`/events?${urlParams}`)
+      expect(spyGet).toHaveBeenCalledTimes(1)
+      expect(spyGet).toHaveBeenCalledWith('/events', options)
     })
-
-    test.each([
-      [{ startDate: true }],
-      [{ endDate: [] }],
-      [{ query: {} }],
-      [{ subcalendarId: 'id' }],
-      [{ format: 'text' }],
-      [{ startDate: '' }],
-      [{ endDate: undefined }],
-      [{ subcalendarId: undefined }],
-    ])('invalid options value', function (options) {
-      expect(() => event.getEvents(options)).toThrow()
-    })
-
     test.each([[{}], [{ subcalendarId: null }]])(
       'ignored options value',
-      function (options) {
-        event.getEvents(options)
-        expect(Request.get).toHaveBeenCalledTimes(1)
-        expect(Request.get).toHaveBeenCalledWith(`/events`)
+      async function (options) {
+        await event.getEvents(options)
+        expect(spyGet).toHaveBeenCalledTimes(1)
+        expect(spyGet).toHaveBeenCalledWith('/events', {})
       }
     )
-
-    test('invalid option parameter', function () {
-      expect(() => event.getEvents({ someKey: true })).toThrow()
+    test('ignored option: undefined', async function () {
+      await event.getEvents(undefined)
+      expect(spyGet).toHaveBeenCalledTimes(1)
+      expect(spyGet).toHaveBeenCalledWith('/events', {})
     })
+    test('error response', async function () {
+      spyGet.mockImplementation(() => Promise.reject(new AxiosError()))
 
-    test.each([[], 'string', true, false, 123, null])(
-      'invalid options',
-      function (option) {
-        expect(() => event.getEvents(option)).toThrow()
-      }
-    )
-
-    test('ignored option: undefined', function () {
-      event.getEvents(undefined)
-      expect(Request.get).toHaveBeenCalledTimes(1)
-      expect(Request.get).toHaveBeenCalledWith(`/events`)
+      await event.getEvents()
+      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
+      expect(spyRenderErrorResponse).toHaveBeenCalledWith(new AxiosError())
     })
   })
 
-  describe('method: listEvent', function () {
-    test('with event id (number)', function () {
-      event.listEvent(1234)
-      expect(Request.get).toHaveBeenCalledTimes(1)
-      expect(Request.get).toHaveBeenCalledWith(`/events/1234`)
+  describe('method: getEvent', function () {
+    const successResponse = getSuccesResponse('event')
+    let spyGet
+    beforeEach(function () {
+      spyGet = jest
+        .spyOn(event._request, 'get')
+        .mockImplementation(() => successResponse)
     })
 
-    test('with event id (string)', function () {
-      event.listEvent('1234')
-      expect(Request.get).toHaveBeenCalledTimes(1)
-      expect(Request.get).toHaveBeenCalledWith(`/events/1234`)
-    })
+    test('with event id (number)', async function () {
+      await event.getEvent(1234)
 
-    test('without event id', function () {
-      expect(() => event.listEvent()).toThrow()
+      expect(spyValidateId).toHaveBeenCalledTimes(1)
+      expect(spyValidateId).toHaveBeenCalledWith(1234)
+      expect(spyGet).toHaveBeenCalledTimes(1)
+      expect(spyGet).toHaveBeenCalledWith('/events/1234')
+      expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
+      expect(spyRenderSuccessResponse).toHaveBeenCalledWith(
+        successResponse,
+        'event'
+      )
     })
+    test('with event id (string)', async function () {
+      await event.getEvent('1234')
+      expect(spyGet).toHaveBeenCalledTimes(1)
+      expect(spyGet).toHaveBeenCalledWith('/events/1234')
+    })
+    test('error response', async function () {
+      spyGet.mockImplementation(() => Promise.reject(new AxiosError()))
 
-    test.each([[], 'string', true, false, {}, null, undefined])(
-      'invalid event id',
-      function (id) {
-        expect(() => event.listEvent(id)).toThrow()
-      }
-    )
+      await event.getEvents()
+      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
+      expect(spyRenderErrorResponse).toHaveBeenCalledWith(new AxiosError())
+    })
   })
 })
+
+function getSuccesResponse(filter) {
+  switch (filter) {
+    case 'events':
+      return { status: 200, statusText: 'Ok', data: { events: [] } }
+    case 'event':
+      return { status: 200, statusText: 'Ok', data: { event: {} } }
+  }
+}
