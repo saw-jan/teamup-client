@@ -1,6 +1,6 @@
-## Teamup Client
+## Teamup Calendar Client
 
-[Teamup API Documentation](https://apidocs.teamup.com/)
+A library for working with [Teamup](https://www.teamup.com/) calendar.
 
 ### Installation
 
@@ -8,64 +8,65 @@
 npm i @sawjan/teamup-client
 ```
 
-OR
-
-```bash
-yarn add @sawjan/teamup-client
-```
-
-### Example
+### Usage
 
 ```js
-const Client = require('@sawjan/teamup-client')
+const TeamupClient = require('@sawjan/teamup-client')
 
-// create a client instance
-const { SubCalendar } = new Client({
+const client = new TeamupClient({
   url: 'https://api.teamup.com',
-  calToken: '<calendar_token>',
-  apiKey: '<api_key>',
-})
-
-// list all the sub-calendars
-SubCalendar.listSubCalendars().then(({ data }) => {
-  console.log(data)
+  calendarKey: '<calendar-key>',
+  teamupToken: '<teamup-token>',
+  bearerToken: '<bearer-token>',
 })
 ```
+
+### Examples
+
+See example code: [examples](./examples/)
 
 ### APIs
 
-#### **Events**
+#### **Event**
 
-1.  **listEvents**([options])
+- .**getEvents**([options])
 
-    - `options?` \<Object\>
+  For available options see [Query Parameters](https://apidocs.teamup.com/docs/api/0f9f896800ffe-get-events-collection-get-events-changed-search-events#Query-Parameters)
 
-      - `startDate?`: \<string\>
-
-      - `endDate?`: \<string\>
-
-      - `subcalendarId?`: \<Array\<number\>\>
-
-      - `query?`: \<string\>
-
-    - Returns: \<Promise\<Response\>\>
-
-1.  **listEvent**(eventId)
-
-    - `eventId` \<number\>
-    - Returns: \<Promise\<Response\>\>
+- .**getAllDayEvents**([options])
+- .**getRecurringEvents**([options])
+- .**getEvent**(eventId)
 
 #### **SubCalendar**
 
-1.  **listSubCalendars**([options])
+- .**getSubCalendars**([options])
 
-    - `options?` \<Object\>
+  For available options see [Query Parameters](https://apidocs.teamup.com/docs/api/046361930f27a-get-a-collection-of-sub-calendars#Query-Parameters)
 
-      - `includeInactive?`: \<boolean\>
+- .**getInactiveSubCalendars**([options])
+- .**getSubCalendar**(subCalendarId):
+- .**getSubCalendarByName**(subCalendarName)
 
-    - Returns: \<Promise\<Response\>\>
+All APIs will either return Promise\<[SuccessResponse](#successresponse)\> or throw Promise\<[ErrorResponse](#errorresponse)\>
 
-1.  **listSubCalendar**(subCalendarId)
+## Structs
 
-    - `subCalendarId` \<number\>
-    - Returns: \<Promise\<Response\>\>
+### SuccessResponse
+
+```js
+{
+  status: <number>,
+  statusText: <string>,
+  data: <array>|<object>
+}
+```
+
+### ErrorResponse
+
+```js
+{
+  status: <number>,
+  statusText: <string>,
+  error: <object>
+}
+```

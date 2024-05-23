@@ -1,19 +1,21 @@
 //
-// This example works with the current codebase
+// This example works with the version ^1
 //
 
-const Teamup = require('../lib')
+// npm i @sawjan/teamup-client@^1
 
-const client = new Teamup({
+const Client = require('@sawjan/teamup-client')
+
+const { Events, SubCalendar } = new Client({
   url: 'https://api.teamup.com',
-  calendarKey: process.env.CALENDAR_KEY,
-  teamupToken: process.env.TEAMUP_TOKEN,
+  calToken: process.env.CALENDAR_TOKEN,
+  apiKey: process.env.API_KEY,
 })
 
 ;(async function getLeaves() {
   // fetch id for leave calendar
   let leaveCalId
-  await client.SubCalendar.getSubCalendars()
+  await SubCalendar.listSubCalendars()
     .then(({ data: { subcalendars } }) => {
       for (const subCal of subcalendars) {
         if (subCal.name === 'leave') {
@@ -22,16 +24,16 @@ const client = new Teamup({
         }
       }
     })
-    .catch((err) => console.log(err))
+    .catch((err) => console.log(err.response.data))
 
   if (leaveCalId) {
     // get all events identified by leaveCalId
-    await client.Event.getEvents({
+    await Events.listEvents({
       startDate: '2022-06-06',
       endDate: '2022-06-10',
       subcalendarId: [leaveCalId],
     })
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err))
+      .then(({ data: { events } }) => console.log(events))
+      .catch((err) => console.log(err.response.data))
   }
 })()

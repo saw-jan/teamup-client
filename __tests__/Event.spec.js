@@ -1,5 +1,5 @@
 const { getSuccesResponse, getErrorResponse } = require('./helpers/helpers')
-const SubCalendar = require('../lib/SubCalendar')
+const Event = require('../lib/Event')
 
 // mocks
 jest.mock('../lib/Request', () => {
@@ -13,19 +13,24 @@ jest.mock('../lib/Request', () => {
 const Request = require('../lib/Request')
 const API = require('../lib/API')
 
-const route = '/subcalendars'
+const route = '/events'
 const params = {
-  includeInactive: null,
+  startDate: null,
+  endDate: null,
+  query: null,
+  subcalendarId: null,
+  format: null,
+  modifiedSince: null,
+  mode: null,
 }
 
-describe('SubCalendar class', function () {
+describe('Event class', function () {
   const spyValidateOptionType = jest.spyOn(API.prototype, '_validateOptionType')
   const spyValidateId = jest.spyOn(API.prototype, '_validateId')
-  const spyValidateArg = jest.spyOn(API.prototype, '_validateArg')
 
-  let spyRenderSuccessResponse, subcalendar
+  let spyRenderSuccessResponse, event
   beforeEach(function () {
-    subcalendar = new SubCalendar(new Request())
+    event = new Event(new Request())
     spyRenderSuccessResponse = jest
       .spyOn(API.prototype, '_renderSuccessResponse')
       .mockImplementation((data) => data)
@@ -40,21 +45,20 @@ describe('SubCalendar class', function () {
     jest.clearAllMocks()
   })
 
-  describe('method: getSubCalendars', function () {
+  describe('method: getEvents', function () {
     const successResponse = {
-      ...getSuccesResponse('subcalendars'),
-      data: { subcalendars: [{}, {}] },
+      ...getSuccesResponse('events'),
+      data: { events: [{}, {}] },
     }
     let spyGet
     beforeEach(function () {
       spyGet = jest
-        .spyOn(subcalendar._request, 'get')
+        .spyOn(event._request, 'get')
         .mockImplementation(() => successResponse)
     })
 
     test('no options', async function () {
-      const response = await subcalendar.getSubCalendars()
-
+      const response = await event.getEvents()
       expect(spyGet).toHaveBeenCalledTimes(1)
       expect(spyGet).toHaveBeenCalledWith(route, {})
       expect(spyValidateOptionType).toHaveBeenCalledTimes(1)
@@ -62,135 +66,147 @@ describe('SubCalendar class', function () {
       expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
       expect(spyRenderSuccessResponse).toHaveBeenCalledWith(
         successResponse,
-        'subcalendars'
+        'events'
       )
       expect(response.data).toStrictEqual(successResponse.data)
     })
-    test.each([[{ includeInactive: true }], [{ includeInactive: false }]])(
-      'valid options value',
-      async function (options) {
-        await subcalendar.getSubCalendars(options)
+    test.each([
+      [{ startDate: '2022-01-01' }],
+      [{ endDate: '2022-01-01' }],
+      [{ endDate: '01-01-2022' }],
+      [{ query: 'meeting' }],
+      [{ subcalendarId: [12345] }],
+      [{ subcalendarId: [12345, 54321] }],
+      [{ format: 'html' }],
+      [{ format: 'markdown' }],
+      [
+        {
+          startDate: '2022-01-01',
+          endDate: '2022-01-01',
+          query: 'meeting',
+          subcalendarId: [12345],
+          format: 'html',
+        },
+      ],
+    ])('valid options value', async function (options) {
+      const response = await event.getEvents(options)
 
-        expect(spyGet).toHaveBeenCalledTimes(1)
-        expect(spyGet).toHaveBeenCalledWith(route, options)
-      }
-    )
-    test.each([[{}], [{ includeInactive: null }]])(
+      expect(spyGet).toHaveBeenCalledTimes(1)
+      expect(spyGet).toHaveBeenCalledWith('/events', options)
+      expect(response.data).toStrictEqual(successResponse.data)
+    })
+    test.each([[{}], [{ subcalendarId: null }]])(
       'ignored options value',
       async function (options) {
-        await subcalendar.getSubCalendars(options)
+        await event.getEvents(options)
         expect(spyGet).toHaveBeenCalledTimes(1)
-        expect(spyGet).toHaveBeenCalledWith(route, {})
+        expect(spyGet).toHaveBeenCalledWith('/events', {})
       }
     )
     test('ignored option: undefined', async function () {
-      await subcalendar.getSubCalendars(undefined)
+      await event.getEvents(undefined)
       expect(spyGet).toHaveBeenCalledTimes(1)
-      expect(spyGet).toHaveBeenCalledWith('/subcalendars', {})
+      expect(spyGet).toHaveBeenCalledWith('/events', {})
     })
-    test('error response', async function () {
+    test('error response', function () {
       spyGet.mockImplementation(() => Promise.reject(getErrorResponse()))
-      expect(
-        async () => await subcalendar.getSubCalendars()
-      ).rejects.toStrictEqual(getErrorResponse())
+      expect(async () => await event.getEvents()).rejects.toStrictEqual(
+        getErrorResponse()
+      )
     })
     test('error', async function () {
       const err = new Error()
       spyGet.mockImplementation(() => {
         throw err
       })
-      expect(
-        async () => await subcalendar.getSubCalendars()
-      ).rejects.toStrictEqual(err)
+      expect(async () => await event.getEvents()).rejects.toStrictEqual(err)
     })
   })
 
-  describe('method: getInactiveSubCalendars', function () {
+  describe('method: getAllDayEvents', function () {
     test('success response', async function () {
       const successResponse = {
-        ...getSuccesResponse('subcalendars'),
-        data: [{ active: false }, { active: true }],
+        ...getSuccesResponse('events'),
+        data: [{ all_day: false }, { all_day: true }],
       }
       const spyGetEvents = jest
-        .spyOn(subcalendar, 'getSubCalendars')
+        .spyOn(event, 'getEvents')
         .mockImplementation(() => successResponse)
 
-      const response = await subcalendar.getInactiveSubCalendars()
+      const response = await event.getAllDayEvents()
 
       expect(spyGetEvents).toHaveBeenCalledTimes(1)
-      expect(spyGetEvents).toHaveBeenCalledWith({ includeInactive: true })
+      expect(spyGetEvents).toHaveBeenCalledWith(params)
       expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
       expect(response.data).toHaveLength(1)
-      expect(response.data).toStrictEqual([{ active: false }])
+      expect(response.data).toStrictEqual([{ all_day: true }])
     })
     test('error response', async function () {
       const spyGetEvents = jest
-        .spyOn(subcalendar, 'getSubCalendars')
+        .spyOn(event, 'getEvents')
         .mockImplementation(() => getErrorResponse())
-      expect(
-        async () => await subcalendar.getInactiveSubCalendars()
-      ).rejects.toStrictEqual(getErrorResponse())
+      expect(async () => await event.getAllDayEvents()).rejects.toStrictEqual(
+        getErrorResponse()
+      )
     })
     test('error', async function () {
       const err = new Error()
-      jest.spyOn(subcalendar, 'getSubCalendars').mockImplementation(() => {
+      jest.spyOn(event, 'getEvents').mockImplementation(() => {
         throw err
       })
-      expect(
-        async () => await subcalendar.getInactiveSubCalendars()
-      ).rejects.toStrictEqual(err)
+      expect(async () => await event.getAllDayEvents()).rejects.toStrictEqual(
+        err
+      )
     })
   })
 
-  describe('method: getSubCalendarByName', function () {
+  describe('method: getRecurringEvents', function () {
     test('success response', async function () {
       const successResponse = {
-        ...getSuccesResponse('subcalendars'),
-        data: [{ name: 'meeting' }, { name: 'leave' }],
+        ...getSuccesResponse('events'),
+        data: [{ rrule: '' }, { rrule: 'Daily' }],
       }
       const spyGetEvents = jest
-        .spyOn(subcalendar, 'getSubCalendars')
+        .spyOn(event, 'getEvents')
         .mockImplementation(() => successResponse)
 
-      const response = await subcalendar.getSubCalendarByName('meeting')
+      const response = await event.getRecurringEvents()
 
-      expect(spyValidateArg).toHaveBeenCalledTimes(1)
-      expect(spyValidateArg).toHaveBeenCalledWith('meeting', ['string'])
       expect(spyGetEvents).toHaveBeenCalledTimes(1)
-      expect(spyGetEvents).toHaveBeenCalledWith()
+      expect(spyGetEvents).toHaveBeenCalledWith(params)
       expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
-      expect(response.data).toStrictEqual({ name: 'meeting' })
+      expect(response.data).toHaveLength(1)
+      expect(response.data).toStrictEqual([{ rrule: 'Daily' }])
     })
     test('error response', async function () {
       const spyGetEvents = jest
-        .spyOn(subcalendar, 'getSubCalendars')
+        .spyOn(event, 'getEvents')
         .mockImplementation(() => getErrorResponse())
       expect(
-        async () => await subcalendar.getSubCalendarByName('meeting')
+        async () => await event.getRecurringEvents()
       ).rejects.toStrictEqual(getErrorResponse())
     })
     test('error', async function () {
       const err = new Error()
-      jest.spyOn(subcalendar, 'getSubCalendars').mockImplementation(() => {
+      jest.spyOn(event, 'getEvents').mockImplementation(() => {
         throw err
       })
       expect(
-        async () => await subcalendar.getSubCalendarByName('meeting')
+        async () => await event.getRecurringEvents()
       ).rejects.toStrictEqual(err)
     })
   })
 
-  describe('method: getSubCalendar', function () {
-    const successResponse = getSuccesResponse('subcalendar')
+  describe('method: getEvent', function () {
+    const successResponse = getSuccesResponse('event')
     let spyGet
     beforeEach(function () {
       spyGet = jest
-        .spyOn(subcalendar._request, 'get')
+        .spyOn(event._request, 'get')
         .mockImplementation(() => successResponse)
     })
-
-    test('with id (number)', async function () {
-      const response = await subcalendar.getSubCalendar(1234)
+    test('with event id (number)', async function () {
+      const response = await event.getEvent(1234)
 
       expect(spyValidateId).toHaveBeenCalledTimes(1)
       expect(spyValidateId).toHaveBeenCalledWith(1234)
@@ -199,29 +215,27 @@ describe('SubCalendar class', function () {
       expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
       expect(spyRenderSuccessResponse).toHaveBeenCalledWith(
         successResponse,
-        'subcalendar'
+        'event'
       )
       expect(response.data).toStrictEqual(successResponse.data)
     })
-    test('with id (string)', async function () {
-      await subcalendar.getSubCalendar(1234)
+    test('with event id (string)', async function () {
+      await event.getEvent('1234')
       expect(spyGet).toHaveBeenCalledTimes(1)
       expect(spyGet).toHaveBeenCalledWith(`${route}/1234`)
     })
     test('error response', async function () {
       spyGet.mockImplementation(() => Promise.reject(getErrorResponse()))
-      expect(
-        async () => await subcalendar.getSubCalendar(1234)
-      ).rejects.toStrictEqual(getErrorResponse())
+      expect(async () => await event.getEvent(1234)).rejects.toStrictEqual(
+        getErrorResponse()
+      )
     })
     test('error', async function () {
       const err = new Error()
       spyGet.mockImplementation(() => {
         throw err
       })
-      expect(
-        async () => await subcalendar.getSubCalendar(1234)
-      ).rejects.toStrictEqual(err)
+      expect(async () => await event.getEvent(1234)).rejects.toStrictEqual(err)
     })
   })
 })
