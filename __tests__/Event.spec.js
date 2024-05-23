@@ -1,4 +1,4 @@
-const { AxiosError } = require('axios')
+const { getSuccesResponse, getErrorResponse } = require('./helpers/helpers')
 const Event = require('../lib/Event')
 
 // mocks
@@ -222,7 +222,7 @@ describe('Event class', function () {
       expect(spyValidateId).toHaveBeenCalledTimes(1)
       expect(spyValidateId).toHaveBeenCalledWith(1234)
       expect(spyGet).toHaveBeenCalledTimes(1)
-      expect(spyGet).toHaveBeenCalledWith('/events/1234')
+      expect(spyGet).toHaveBeenCalledWith(`${route}/1234`)
       expect(spyRenderSuccessResponse).toHaveBeenCalledTimes(1)
       expect(spyRenderSuccessResponse).toHaveBeenCalledWith(
         successResponse,
@@ -233,7 +233,7 @@ describe('Event class', function () {
     test('with event id (string)', async function () {
       await event.getEvent('1234')
       expect(spyGet).toHaveBeenCalledTimes(1)
-      expect(spyGet).toHaveBeenCalledWith('/events/1234')
+      expect(spyGet).toHaveBeenCalledWith(`${route}/1234`)
     })
     test('error response', async function () {
       spyGet.mockImplementation(() => Promise.reject(getErrorResponse()))
@@ -255,16 +255,3 @@ describe('Event class', function () {
     })
   })
 })
-
-function getSuccesResponse(filter) {
-  switch (filter) {
-    case 'events':
-      return { status: 200, statusText: 'Ok', data: { events: [] } }
-    case 'event':
-      return { status: 200, statusText: 'Ok', data: { event: {} } }
-  }
-}
-
-function getErrorResponse() {
-  return { status: 400, statusText: 'Bad Request', error: {} }
-}

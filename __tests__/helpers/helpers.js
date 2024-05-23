@@ -11,3 +11,11 @@ exports.buildParams = function (params) {
   })
   return urlParams.substring(0, urlParams.length - 1)
 }
+
+exports.getSuccesResponse = function (filter) {
+  return { status: 200, statusText: 'Ok', data: { [filter]: {} } }
+}
+
+exports.getErrorResponse = function () {
+  return { status: 400, statusText: 'Bad Request', error: {} }
+}
