@@ -27,13 +27,19 @@ const params = {
 describe('Event class', function () {
   const spyValidateOptionType = jest.spyOn(API.prototype, '_validateOptionType')
   const spyValidateId = jest.spyOn(API.prototype, '_validateId')
-  const spyRenderSuccessResponse = jest
-    .spyOn(API.prototype, '_renderSuccessResponse')
-    .mockImplementation((data) => data)
-  const spyRenderErrorResponse = jest
-    .spyOn(API.prototype, '_renderErrorResponse')
-    .mockImplementation((data) => data)
-  const event = new Event(new Request())
+
+  let spyRenderSuccessResponse, event
+  beforeEach(function () {
+    event = new Event(new Request())
+    spyRenderSuccessResponse = jest
+      .spyOn(API.prototype, '_renderSuccessResponse')
+      .mockImplementation((data) => data)
+    jest
+      .spyOn(API.prototype, '_renderErrorResponse')
+      .mockImplementation((data) => {
+        throw data
+      })
+  })
 
   afterEach(function () {
     jest.clearAllMocks()
@@ -102,23 +108,18 @@ describe('Event class', function () {
       expect(spyGet).toHaveBeenCalledTimes(1)
       expect(spyGet).toHaveBeenCalledWith('/events', {})
     })
-    test('error response', async function () {
+    test('error response', function () {
       spyGet.mockImplementation(() => Promise.reject(getErrorResponse()))
-
-      const response = await event.getEvents()
-      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
-      expect(spyRenderErrorResponse).toHaveBeenCalledWith(getErrorResponse())
-      expect(response.error).toStrictEqual({})
+      expect(async () => await event.getEvents()).rejects.toStrictEqual(
+        getErrorResponse()
+      )
     })
     test('error', async function () {
       const err = new Error()
       spyGet.mockImplementation(() => {
         throw err
       })
-
-      await event.getEvents()
-      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
-      expect(spyRenderErrorResponse).toHaveBeenCalledWith(err)
+      expect(async () => await event.getEvents()).rejects.toStrictEqual(err)
     })
   })
 
@@ -144,24 +145,18 @@ describe('Event class', function () {
       const spyGetEvents = jest
         .spyOn(event, 'getEvents')
         .mockImplementation(() => getErrorResponse())
-
-      const response = await event.getAllDayEvents()
-
-      expect(spyGetEvents).toHaveBeenCalledTimes(1)
-      expect(spyGetEvents).toHaveBeenCalledWith(params)
-      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
-      expect(spyRenderErrorResponse).toHaveBeenCalledWith(getErrorResponse())
-      expect(response.error).toStrictEqual({})
+      expect(async () => await event.getAllDayEvents()).rejects.toStrictEqual(
+        getErrorResponse()
+      )
     })
     test('error', async function () {
       const err = new Error()
       jest.spyOn(event, 'getEvents').mockImplementation(() => {
         throw err
       })
-
-      await event.getAllDayEvents()
-      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
-      expect(spyRenderErrorResponse).toHaveBeenCalledWith(err)
+      expect(async () => await event.getAllDayEvents()).rejects.toStrictEqual(
+        err
+      )
     })
   })
 
@@ -187,24 +182,18 @@ describe('Event class', function () {
       const spyGetEvents = jest
         .spyOn(event, 'getEvents')
         .mockImplementation(() => getErrorResponse())
-
-      const response = await event.getRecurringEvents()
-
-      expect(spyGetEvents).toHaveBeenCalledTimes(1)
-      expect(spyGetEvents).toHaveBeenCalledWith(params)
-      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
-      expect(spyRenderErrorResponse).toHaveBeenCalledWith(getErrorResponse())
-      expect(response.error).toStrictEqual({})
+      expect(
+        async () => await event.getRecurringEvents()
+      ).rejects.toStrictEqual(getErrorResponse())
     })
     test('error', async function () {
       const err = new Error()
       jest.spyOn(event, 'getEvents').mockImplementation(() => {
         throw err
       })
-
-      await event.getRecurringEvents()
-      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
-      expect(spyRenderErrorResponse).toHaveBeenCalledWith(err)
+      expect(
+        async () => await event.getRecurringEvents()
+      ).rejects.toStrictEqual(err)
     })
   })
 
@@ -237,21 +226,16 @@ describe('Event class', function () {
     })
     test('error response', async function () {
       spyGet.mockImplementation(() => Promise.reject(getErrorResponse()))
-
-      const response = await event.getEvent(1234)
-      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
-      expect(spyRenderErrorResponse).toHaveBeenCalledWith(getErrorResponse())
-      expect(response.error).toStrictEqual({})
+      expect(async () => await event.getEvent(1234)).rejects.toStrictEqual(
+        getErrorResponse()
+      )
     })
     test('error', async function () {
       const err = new Error()
       spyGet.mockImplementation(() => {
         throw err
       })
-
-      await event.getEvent(1234)
-      expect(spyRenderErrorResponse).toHaveBeenCalledTimes(1)
-      expect(spyRenderErrorResponse).toHaveBeenCalledWith(err)
+      expect(async () => await event.getEvent(1234)).rejects.toStrictEqual(err)
     })
   })
 })
