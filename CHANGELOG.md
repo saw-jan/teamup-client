@@ -13,7 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-## [2.0.0] - 2024-02-28
+## [2.0.1] - 2024-05-24
+
+### Fixed
+
+- get requests doesn't pass query params correctly (https://github.com/saw-jan/teamup-client/pull/9)
+
+## [2.0.0] - 2024-05-23
 
 ### Added
 
